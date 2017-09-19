@@ -5,6 +5,8 @@ import com.robby.utility.TextUtil;
 import com.robby.utility.ViewUtil;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -78,6 +80,16 @@ public class DepartmentFormController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         colCode.setCellValueFactory(new PropertyValueFactory<>("code"));
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        txtCode.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue,
+                String newValue) -> {
+            if (!newValue.matches("\\d+")) {
+                if (((StringProperty) observable).getValue() == null
+                        || ((StringProperty) observable).getValue().isEmpty()) {
+                    oldValue = "";
+                }
+                ((StringProperty) observable).setValue(oldValue);
+            }
+        });
     }
 
 }
