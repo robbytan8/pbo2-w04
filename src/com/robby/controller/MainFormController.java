@@ -2,7 +2,9 @@ package com.robby.controller;
 
 import com.robby.MainApp;
 import com.robby.dao.DepartmentDaoImpl;
+import com.robby.dao.StudentDaoImpl;
 import com.robby.entity.Department;
+import com.robby.entity.Student;
 import com.robby.utility.ViewUtil;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -31,14 +34,40 @@ public class MainFormController implements Initializable {
     @FXML
     private BorderPane borderPane;
     private DepartmentDaoImpl departmentDao;
-    private ObservableList<Department> departments;
     private Stage departmentStage;
+    private ObservableList<Department> departments;
+    private StudentDaoImpl studentDao;
+    private Stage studentStage;
+    private ObservableList<Student> students;
 
     public DepartmentDaoImpl getDepartmentDao() {
         if (departmentDao == null) {
             departmentDao = new DepartmentDaoImpl();
         }
         return departmentDao;
+    }
+
+    public ObservableList<Department> getDepartments() {
+        if (departments == null) {
+            departments = FXCollections.observableArrayList();
+            departments.addAll(getDepartmentDao().showAllData());
+        }
+        return departments;
+    }
+
+    public StudentDaoImpl getStudentDao() {
+        if (studentDao == null) {
+            studentDao = new StudentDaoImpl();
+        }
+        return studentDao;
+    }
+
+    public ObservableList<Student> getStudents() {
+        if (students == null) {
+            students = FXCollections.observableArrayList();
+            students.addAll(getStudentDao().showAllData());
+        }
+        return students;
     }
 
     /**
@@ -50,14 +79,6 @@ public class MainFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }
-
-    public ObservableList<Department> getDepartments() {
-        if (departments == null) {
-            departments = FXCollections.observableArrayList();
-            departments.addAll(getDepartmentDao().showAllData());
-        }
-        return departments;
     }
 
     @FXML
@@ -88,7 +109,6 @@ public class MainFormController implements Initializable {
                 departmentStage.setTitle("Department Management");
                 departmentStage.initOwner(borderPane.getScene().getWindow());
                 departmentStage.initModality(Modality.NONE);
-//                departmentStage.show();
             } catch (IOException ex) {
                 ViewUtil.showAlert(Alert.AlertType.ERROR, "Error", ex.getMessage());
             }
@@ -102,6 +122,28 @@ public class MainFormController implements Initializable {
 
     @FXML
     private void toolStudentAction(ActionEvent event) {
+        if (studentStage == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader();
+                loader.setLocation(MainApp.class.getResource("view/StudentForm.fxml"));
+                VBox root = loader.load();
+                StudentFormController controller = loader.getController();
+                controller.setMainController(this);
+                Scene scene = new Scene(root);
+                studentStage = new Stage();
+                studentStage.setScene(scene);
+                studentStage.setTitle("Student Management");
+                studentStage.initOwner(borderPane.getScene().getWindow());
+                studentStage.initModality(Modality.NONE);
+            } catch (IOException ex) {
+                ViewUtil.showAlert(Alert.AlertType.ERROR, "Error", ex.getMessage());
+            }
+        }
+        if (studentStage.isShowing() && !studentStage.isFocused()) {
+            studentStage.toFront();
+        } else {
+            studentStage.show();
+        }
     }
 
 }
