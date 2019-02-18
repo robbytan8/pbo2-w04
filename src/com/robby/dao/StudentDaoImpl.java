@@ -53,7 +53,8 @@ public class StudentDaoImpl implements DaoService<Student> {
         List<Student> students = new ArrayList<>();
         try {
             Connection connection = DBUtil.createMySQLConnection();
-            String query = "SELECT s.*, d.code, d.name, d.status FROM student s JOIN department d ORDER BY d.code";
+            String query
+                    = "SELECT s.*, d.code, d.name, d.status FROM student s JOIN department d ON d.id = s.department_id ORDER BY d.code";
             try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Department department = new Department();
